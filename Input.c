@@ -100,7 +100,7 @@ bool disableLayout(const uint16_t device_id, const uint16_t lang_id)
 	UINT num = EnumEnabledLayoutOrTip(NULL, NULL, NULL, NULL, 0);
 	const size_t size = sizeof(LayoutOrTipProfile) * num;
 	LayoutOrTipProfile *profiles = malloc(size);
-	num = EnumEnabledLayoutOrTip(NULL, NULL, NULL, profiles, size);
+	num = EnumEnabledLayoutOrTip(NULL, NULL, NULL, profiles, (UINT)size);
 
 	for (UINT i = 0; i < num; ++i) {
 		const LayoutOrTipProfile *profile = &profiles[i];

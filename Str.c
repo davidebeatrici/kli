@@ -20,7 +20,7 @@ bool getLayoutLibraryPath(char *dst, const size_t size, const char *file)
 		return false;
 	}
 
-	if (!GetSystemDirectory(dst, size)) {
+	if (!GetSystemDirectory(dst, (UINT)size)) {
 		showError("getLayoutLibraryPath()", "GetSystemDirectory() failed with error %lu!", GetLastError());
 		return false;
 	}
@@ -49,7 +49,7 @@ bool isValidUUID(const char *str)
 	uint16_t tmp_16;
 	uint32_t tmp_32, n_bytes;
 	const int n_items = sscanf_s(str, "{%8X-%4hX-%4hX-%4hX-%4hX%8X}%n%c", &tmp_32, &tmp_16, &tmp_16, &tmp_16, &tmp_16,
-								 &tmp_32, &n_bytes, &tmp_8, sizeof(tmp_8));
+								 &tmp_32, &n_bytes, &tmp_8, (unsigned int)sizeof(tmp_8));
 
 	return n_bytes == UUID_LEN && n_items == 6;
 }
@@ -62,7 +62,7 @@ bool parseLayoutID(uint16_t *id, const char *str)
 
 	uint8_t tmp_8;
 	uint32_t n_bytes;
-	const int n_items = sscanf_s(str, "%4hx%n%c", id, &n_bytes, &tmp_8, sizeof(tmp_8));
+	const int n_items = sscanf_s(str, "%4hx%n%c", id, &n_bytes, &tmp_8, (unsigned int)sizeof(tmp_8));
 
 	return n_bytes == ID_LEN && n_items == 1;
 }
@@ -75,7 +75,8 @@ bool parseKLID(uint16_t *device_id, uint16_t *lang_id, const char *klid)
 
 	uint8_t tmp_8;
 	uint32_t n_bytes;
-	const int n_items = sscanf_s(klid, "%4hx%4hx%n%c", device_id, lang_id, &n_bytes, &tmp_8, sizeof(tmp_8));
+	const int n_items =
+		sscanf_s(klid, "%4hx%4hx%n%c", device_id, lang_id, &n_bytes, &tmp_8, (unsigned int)sizeof(tmp_8));
 
 	return n_bytes == KLID_LEN && n_items == 2;
 }

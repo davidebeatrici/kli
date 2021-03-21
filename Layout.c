@@ -93,26 +93,26 @@ bool installLayout(const Config *config, const Layouts *layouts)
 	}
 
 	ret = RegSetKeyValue(key, NULL, "Layout Product Code", REG_SZ, config->product_code,
-						 strlen(config->product_code) + 1);
+						 (DWORD)strlen(config->product_code) + 1);
 	if (ret != ERROR_SUCCESS) {
 		showError("installLayout()", "RegSetKeyValue() failed to set \"Layout Product Code\" with error %ld!", ret);
 		goto FINAL_REG;
 	}
 
-	ret = RegSetKeyValue(key, NULL, "Layout File", REG_SZ, config->file, strlen(config->file) + 1);
+	ret = RegSetKeyValue(key, NULL, "Layout File", REG_SZ, config->file, (DWORD)strlen(config->file) + 1);
 	if (ret != ERROR_SUCCESS) {
 		showError("installLayout()", "RegSetKeyValue() failed to set \"Layout File\" with error %ld!", ret);
 		goto FINAL_REG;
 	}
 
-	ret = RegSetKeyValue(key, NULL, "Layout Text", REG_SZ, config->text, strlen(config->text) + 1);
+	ret = RegSetKeyValue(key, NULL, "Layout Text", REG_SZ, config->text, (DWORD)strlen(config->text) + 1);
 	if (ret != ERROR_SUCCESS) {
 		showError("installLayout()", "RegSetKeyValue() failed to set \"Layout Text\" with error %ld!", ret);
 		goto FINAL_REG;
 	}
 
 	ret = RegSetKeyValue(key, NULL, "Layout Display Name", REG_SZ, config->display_name,
-						 strlen(config->display_name) + 1);
+						 (DWORD)strlen(config->display_name) + 1);
 	if (ret != ERROR_SUCCESS) {
 		showError("installLayout()", "RegSetKeyValue() failed to set \"Layout Display Name\" with error %ld!", ret);
 		goto FINAL_REG;
