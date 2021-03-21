@@ -1,0 +1,29 @@
+jobs:
+- job: "Windows_${{parameters.arch}}"
+  pool:
+    vmImage: "windows-latest"
+  steps:
+  - task: Cache@2
+    inputs:
+      key: '"vcpkg-installed-${{parameters.vcpkgTriplet}}"'
+      path: 'C:/vcpkg/installed'
+    displayName: 'Environment storage'
+  - script: |
+      C: && cd C:\vcpkg
+      git pull
+      bootstrap-vcpkg.bat
+    displayName: "Update vcpkg"
+  - script: |
+      vcpkg install inih --triplet ${{parameters.vcpkgTriplet}}
+    displayName: "Install dependencies"
+  - script: |
+      cd $(Build.BinariesDirectory)
+      call "${{parameters.vcvarsPath}}" ${{parameters.vcvarsArg}}
+      cmake -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_TOOLCHAIN_FILE="C:\vcpkg\scripts\buildsystems\vcpkg.cmake" -DVCPKG_TARGET_TRIPLET=${{parameters.vcpkgTriplet}} $(Build.SourcesDirectory)
+      ninja
+      copy *.exe $(Build.ArtifactStagingDirectory)
+      copy *.pdb $(Build.ArtifactStagingDirectory)
+    displayName: "Build"
+  - template: "artifacts-steps.yml"
+    parameters:
+      name: "Windows (${{parameters.arch}})"

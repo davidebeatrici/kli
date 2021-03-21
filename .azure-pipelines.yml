@@ -1,0 +1,19 @@
+jobs:
+- template: ".ci/msvc.yml"
+  parameters:
+    arch: "ARM64"
+    vcpkgTriplet: "arm64-windows-static-md"
+    vcvarsArg: "amd64_arm64"
+    vcvarsPath: "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\VC\\Auxiliary\\Build\\vcvarsall.bat"
+- template: ".ci/msvc.yml"
+  parameters:
+    arch: "x64"
+    vcpkgTriplet: "x64-windows-static-md"
+    vcvarsArg: "x64"
+    vcvarsPath: "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\VC\\Auxiliary\\Build\\vcvarsall.bat"
+- template: ".ci/msvc.yml"
+  parameters:
+    arch: "x86"
+    vcpkgTriplet: "x86-windows-static-md"
+    vcvarsArg: "x64_x86"
+    vcvarsPath: "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\VC\\Auxiliary\\Build\\vcvarsall.bat"
