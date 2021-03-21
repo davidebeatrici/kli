@@ -1,0 +1,10 @@
+AlignAfterOpenBracket: Align
+AllowShortCaseLabelsOnASingleLine: true
+BraceWrapping:
+  AfterStruct: true
+  AfterFunction: true
+BreakBeforeBraces: Custom
+ColumnLimit: 120
+IndentWidth: 4
+TabWidth: 4
+UseTab: ForContinuationAndIndentation
