@@ -210,7 +210,8 @@ Layouts *getLayouts()
 		goto FINAL;
 	}
 
-	name = malloc(max_key_size);
+	// RegQueryInfoKey() does not include the null terminator.
+	name = malloc(++max_key_size);
 
 	layouts->list = malloc(sizeof(Layout) * layouts->num);
 	memset(layouts->list, 0, sizeof(Layout) * layouts->num);
