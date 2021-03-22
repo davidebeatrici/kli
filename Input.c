@@ -50,7 +50,7 @@ bool enableLayout(const uint16_t device_id, const uint16_t lang_id)
 	}
 
 	wchar_t profile[MAX_PATH];
-	swprintf(profile, sizeof(profile), L"%04x:%04x%04x", lang_id, device_id, lang_id);
+	swprintf(profile, sizeof(profile) / sizeof(profile[0]), L"%04x:%04x%04x", lang_id, device_id, lang_id);
 	ok = InstallLayoutOrTip(profile, 0);
 	if (!ok) {
 		showError("enableLayout()", "InstallLayoutOrTip() failed!");
