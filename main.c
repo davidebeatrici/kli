@@ -4,8 +4,21 @@
 
 #include <string.h>
 
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+
+#include <Windows.h>
+
 int main()
 {
+	// Prevent LoadKeyboardLayout() from loading the layout DLL from the application directory.
+	// https://github.com/MicrosoftDocs/sdk-api/pull/711
+	if (!SetDefaultDllDirectories(LOAD_LIBRARY_SEARCH_SYSTEM32)) {
+		showError("main()", "SetDefaultDllDirectories() failed with error %ld!", GetLastError());
+		return -1;
+	}
+
 	Config config = {0};
 	if (!loadConfig(&config, "kli.ini")) {
 		return 1;
