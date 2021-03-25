@@ -57,13 +57,6 @@ bool enableLayout(const uint16_t device_id, const uint16_t lang_id)
 		goto FINAL;
 	}
 
-	char klid[KLID_SIZE];
-	snprintf(klid, sizeof(klid), "%04x%04x", device_id, lang_id);
-	if (!LoadKeyboardLayout(klid, KLF_REPLACELANG)) {
-		showWarning("enableLayout()", "LoadKeyboardLayout() failed with error %lu!", GetLastError());
-		goto FINAL;
-	}
-
 	ok = true;
 FINAL:
 	FreeLibrary(module);
@@ -117,44 +110,7 @@ bool disableLayout(const uint16_t device_id, const uint16_t lang_id)
 	}
 
 	free(profiles);
-
-	num = GetKeyboardLayoutList(0, NULL);
-	if (!num) {
-		showError("disableLayout()", "GetKeyboardLayoutList() failed to get the number of layouts with error %lu!",
-				  GetLastError());
-		goto FINAL;
-	}
-
-	HKL *hkls = malloc(sizeof(HKL) * num);
-	if (!GetKeyboardLayoutList(num, hkls)) {
-		showError("disableLayout()", "GetKeyboardLayoutList() failed to get the layouts with error %lu!",
-				  GetLastError());
-		goto FINAL_HKLS;
-	}
-
-	char klid[KLID_SIZE];
-	snprintf(klid, sizeof(klid), "%04x%04x", device_id, lang_id);
-
-	for (UINT i = 0; i < num; ++i) {
-		if (!ActivateKeyboardLayout(hkls[i], 0)) {
-			continue;
-		}
-
-		char name[KL_NAMELENGTH];
-		if (!GetKeyboardLayoutName(name)) {
-			continue;
-		}
-
-		// GetKeyboardLayoutName() uses uppercase letters.
-		if (_stricmp(name, klid) == 0) {
-			UnloadKeyboardLayout(hkls[i]);
-			break;
-		}
-	}
-
 	ok = true;
-FINAL_HKLS:
-	free(hkls);
 FINAL:
 	FreeLibrary(module);
 	return ok;
