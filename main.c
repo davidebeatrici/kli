@@ -15,7 +15,7 @@ int main()
 	// Prevent LoadKeyboardLayout() from loading the layout DLL from the application directory.
 	// https://github.com/MicrosoftDocs/sdk-api/pull/711
 	if (!SetDefaultDllDirectories(LOAD_LIBRARY_SEARCH_SYSTEM32)) {
-		showError("main()", "SetDefaultDllDirectories() failed with error %ld!", GetLastError());
+		showSysError("main()", "SetDefaultDllDirectories() failed!", GetLastError());
 		return -1;
 	}
 

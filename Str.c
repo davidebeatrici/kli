@@ -21,7 +21,7 @@ bool getLayoutLibraryPath(char *dst, const size_t size, const char *file)
 	}
 
 	if (!GetSystemDirectory(dst, (UINT)size)) {
-		showError("getLayoutLibraryPath()", "GetSystemDirectory() failed with error %lu!", GetLastError());
+		showSysError("getLayoutLibraryPath()", "GetSystemDirectory() failed!", GetLastError());
 		return false;
 	}
 

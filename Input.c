@@ -35,7 +35,7 @@ bool enableLayout(const uint16_t device_id, const uint16_t lang_id)
 {
 	HMODULE module = LoadLibrary("input.dll");
 	if (!module) {
-		showError("enableLayout()", "LoadLibrary() failed to load \"input.dll\" with error %lu!", GetLastError());
+		showSysError("enableLayout()", "LoadLibrary() failed to load \"input.dll\"!", GetLastError());
 		return false;
 	}
 
@@ -43,9 +43,8 @@ bool enableLayout(const uint16_t device_id, const uint16_t lang_id)
 
 	INSTALLLAYOUTORTIP InstallLayoutOrTip = (INSTALLLAYOUTORTIP)GetProcAddress(module, "InstallLayoutOrTip");
 	if (!InstallLayoutOrTip) {
-		showError("enableLayout()",
-				  "GetProcAddress() failed to get the address of \"InstallLayoutOrTip()\" with error %lu!",
-				  GetLastError());
+		showSysError("enableLayout()", "GetProcAddress() failed to get the address of \"InstallLayoutOrTip()\"!",
+					 GetLastError());
 		goto FINAL;
 	}
 
@@ -67,7 +66,7 @@ bool disableLayout(const uint16_t device_id, const uint16_t lang_id)
 {
 	HMODULE module = LoadLibrary("input.dll");
 	if (!module) {
-		showError("disableLayout()", "LoadLibrary() failed to load \"input.dll\" with error %lu!", GetLastError());
+		showSysError("disableLayout()", "LoadLibrary() failed to load \"input.dll\"!", GetLastError());
 		return false;
 	}
 
@@ -75,18 +74,16 @@ bool disableLayout(const uint16_t device_id, const uint16_t lang_id)
 
 	INSTALLLAYOUTORTIP InstallLayoutOrTip = (INSTALLLAYOUTORTIP)GetProcAddress(module, "InstallLayoutOrTip");
 	if (!InstallLayoutOrTip) {
-		showError("disableLayout()",
-				  "GetProcAddress() failed to get the address of \"InstallLayoutOrTip()\" with error %lu!",
-				  GetLastError());
+		showSysError("disableLayout()", "GetProcAddress() failed to get the address of \"InstallLayoutOrTip()\"!",
+					 GetLastError());
 		goto FINAL;
 	}
 
 	ENUMENABLEDLAYOUTORTIP EnumEnabledLayoutOrTip =
 		(ENUMENABLEDLAYOUTORTIP)GetProcAddress(module, "EnumEnabledLayoutOrTip");
 	if (!EnumEnabledLayoutOrTip) {
-		showError("disableLayout()",
-				  "GetProcAddress() failed to get the address of \"EnumEnabledLayoutOrTip()\" with error %lu!",
-				  GetLastError());
+		showSysError("disableLayout()", "GetProcAddress() failed to get the address of \"EnumEnabledLayoutOrTip()\"!",
+					 GetLastError());
 		goto FINAL;
 	}
 

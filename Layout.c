@@ -27,7 +27,7 @@ bool installLayout(const Config *config, const Layouts *layouts)
 		if (error == ERROR_FILE_EXISTS) {
 			showError("installLayout()", "\"%s\" already exists!", path);
 		} else {
-			showError("installLayout()", "CopyFile() failed to copy to \"%s\" with error %lu!", path, error);
+			showSysError("installLayout()", "CopyFile() failed to copy to \"%s\"!", error, path);
 		}
 
 		return false;
@@ -70,7 +70,7 @@ bool installLayout(const Config *config, const Layouts *layouts)
 		const LSTATUS ret =
 			RegCreateKeyEx(HKEY_LOCAL_MACHINE, reg_path, 0, NULL, 0, KEY_WRITE, NULL, &key, &disposition);
 		if (ret != ERROR_SUCCESS) {
-			showError("installLayout()", "RegCreateKeyEx() failed with error %ld!", ret);
+			showSysError("installLayout()", "RegCreateKeyEx() failed!", ret);
 			goto FINAL;
 		}
 
@@ -88,33 +88,33 @@ bool installLayout(const Config *config, const Layouts *layouts)
 
 	LSTATUS ret = RegSetKeyValue(key, NULL, "Layout Id", REG_SZ, layout_id, sizeof(layout_id));
 	if (ret != ERROR_SUCCESS) {
-		showError("installLayout()", "RegSetKeyValue() failed to set \"Layout Id\" with error %ld!", ret);
+		showSysError("installLayout()", "RegSetKeyValue() failed to set \"Layout Id\"!", ret);
 		goto FINAL_REG;
 	}
 
 	ret = RegSetKeyValue(key, NULL, "Layout Product Code", REG_SZ, config->product_code,
 						 (DWORD)strlen(config->product_code) + 1);
 	if (ret != ERROR_SUCCESS) {
-		showError("installLayout()", "RegSetKeyValue() failed to set \"Layout Product Code\" with error %ld!", ret);
+		showSysError("installLayout()", "RegSetKeyValue() failed to set \"Layout Product Code\"!", ret);
 		goto FINAL_REG;
 	}
 
 	ret = RegSetKeyValue(key, NULL, "Layout File", REG_SZ, config->file, (DWORD)strlen(config->file) + 1);
 	if (ret != ERROR_SUCCESS) {
-		showError("installLayout()", "RegSetKeyValue() failed to set \"Layout File\" with error %ld!", ret);
+		showSysError("installLayout()", "RegSetKeyValue() failed to set \"Layout File\"!", ret);
 		goto FINAL_REG;
 	}
 
 	ret = RegSetKeyValue(key, NULL, "Layout Text", REG_SZ, config->text, (DWORD)strlen(config->text) + 1);
 	if (ret != ERROR_SUCCESS) {
-		showError("installLayout()", "RegSetKeyValue() failed to set \"Layout Text\" with error %ld!", ret);
+		showSysError("installLayout()", "RegSetKeyValue() failed to set \"Layout Text\"!", ret);
 		goto FINAL_REG;
 	}
 
 	ret = RegSetKeyValue(key, NULL, "Layout Display Name", REG_SZ, config->display_name,
 						 (DWORD)strlen(config->display_name) + 1);
 	if (ret != ERROR_SUCCESS) {
-		showError("installLayout()", "RegSetKeyValue() failed to set \"Layout Display Name\" with error %ld!", ret);
+		showSysError("installLayout()", "RegSetKeyValue() failed to set \"Layout Display Name\"!", ret);
 		goto FINAL_REG;
 	}
 
@@ -127,8 +127,8 @@ FINAL_REG:
 	if (!ok) {
 		ret = RegDeleteKey(HKEY_LOCAL_MACHINE, reg_path);
 		if (ret != ERROR_SUCCESS && ret != ERROR_FILE_NOT_FOUND) {
-			showWarning("installLayout()", "RegDeleteKey() failed with error %ld!\n\nPlease delete \"%s\" manually.",
-						ret, reg_path);
+			showSysWarning("installLayout()", "RegDeleteKey() failed!\n\nPlease delete \"%s\" manually.", ret,
+						   reg_path);
 		}
 	}
 
@@ -138,8 +138,8 @@ FINAL:
 		if (!DeleteFile(path)) {
 			const DWORD error = GetLastError();
 			if (error != ERROR_FILE_NOT_FOUND) {
-				showWarning("installLayout()", "DeleteFile() failed with error %lu!\n\nPlease delete \"%s\" manually.",
-							error, path);
+				showSysWarning("installLayout()", "DeleteFile() failed!\n\nPlease delete \"%s\" manually.", error,
+							   path);
 			}
 		}
 	}
@@ -165,7 +165,7 @@ bool uninstallLayout(const Layout *layout)
 
 	const LSTATUS ret = RegDeleteKey(HKEY_LOCAL_MACHINE, path);
 	if (ret != ERROR_SUCCESS) {
-		showError("uninstallLayout()", "RegDeleteKey() failed with error %ld!", ret);
+		showSysError("uninstallLayout()", "RegDeleteKey() failed!", ret);
 		return false;
 	}
 
@@ -176,8 +176,7 @@ bool uninstallLayout(const Layout *layout)
 	if (!DeleteFile(path)) {
 		const DWORD error = GetLastError();
 		if (error != ERROR_FILE_NOT_FOUND) {
-			showWarning("uninstallLayout()", "DeleteFile() failed with error %lu!\n\nPlease delete \"%s\" manually.",
-						error, path);
+			showSysWarning("uninstallLayout()", "DeleteFile() failed!\n\nPlease delete \"%s\" manually.", error, path);
 			return false;
 		}
 	}
@@ -193,7 +192,7 @@ Layouts *getLayouts()
 	HKEY key;
 	LSTATUS ret = RegOpenKeyEx(HKEY_LOCAL_MACHINE, path, 0, KEY_READ, &key);
 	if (ret != ERROR_SUCCESS) {
-		showError("getLayouts()", "RegOpenKeyEx() failed with error %ld!", ret);
+		showSysError("getLayouts()", "RegOpenKeyEx() failed!", ret);
 		return NULL;
 	}
 
@@ -206,7 +205,7 @@ Layouts *getLayouts()
 	DWORD max_key_size;
 	ret = RegQueryInfoKey(key, NULL, NULL, NULL, &layouts->num, &max_key_size, NULL, NULL, NULL, NULL, NULL, NULL);
 	if (ret != ERROR_SUCCESS) {
-		showError("getLayouts()", "RegQueryInfoKey() failed with error %ld!", ret);
+		showSysError("getLayouts()", "RegQueryInfoKey() failed!", ret);
 		goto FINAL;
 	}
 
@@ -220,7 +219,7 @@ Layouts *getLayouts()
 		DWORD size = max_key_size;
 		ret = RegEnumKeyEx(key, i, name, &size, 0, NULL, 0, NULL);
 		if (ret != ERROR_SUCCESS) {
-			showError("getLayouts()", "RegEnumKeyEx() failed at index %lu with error %ld!", i, ret);
+			showSysError("getLayouts()", "RegEnumKeyEx() failed at index %lu!", ret, i);
 			goto FINAL;
 		}
 
@@ -239,8 +238,7 @@ Layouts *getLayouts()
 				goto FINAL;
 			}
 		} else if (ret != ERROR_FILE_NOT_FOUND) {
-			showError("getLayouts()", "RegGetValue() failed to get \"Layout Id\" from \"%s\" with error %ld!", name,
-					  ret);
+			showSysError("getLayouts()", "RegGetValue() failed to get \"Layout Id\" from \"%s\"!", ret, name);
 			goto FINAL;
 		}
 
@@ -249,8 +247,8 @@ Layouts *getLayouts()
 			layout->product_code = malloc(UUID_SIZE);
 			ret = RegGetValue(key, name, "Layout Product Code", RRF_RT_REG_SZ, NULL, layout->product_code, &size);
 			if (ret != ERROR_SUCCESS && ret != ERROR_FILE_NOT_FOUND) {
-				showError("getLayouts()",
-						  "RegGetValue() failed to get \"Layout Product Code\" from \"%s\" with error %ld!", name, ret);
+				showSysError("getLayouts()", "RegGetValue() failed to get \"Layout Product Code\" from \"%s\"!", ret,
+							 name);
 				goto FINAL;
 			}
 		}
@@ -258,17 +256,15 @@ Layouts *getLayouts()
 		size = 0;
 		ret = RegGetValue(key, name, "Layout File", RRF_RT_REG_SZ, NULL, NULL, &size);
 		if (ret != ERROR_SUCCESS) {
-			showError("getLayouts()",
-					  "RegGetValue() failed to get the required size for \"Layout File\" from \"%s\" with error %ld!",
-					  name, ret);
+			showSysError("getLayouts()",
+						 "RegGetValue() failed to get the required size for \"Layout File\" from \"%s\"!", ret, name);
 			goto FINAL;
 		}
 
 		layout->file = malloc(size);
 		ret = RegGetValue(key, name, "Layout File", RRF_RT_REG_SZ, NULL, layout->file, &size);
 		if (ret != ERROR_SUCCESS) {
-			showError("getLayouts()", "RegGetValue() failed to get \"Layout File\" from \"%s\" with error %ld!", name,
-					  ret);
+			showSysError("getLayouts()", "RegGetValue() failed to get \"Layout File\" from \"%s\"!", ret, name);
 			goto FINAL;
 		}
 	}
