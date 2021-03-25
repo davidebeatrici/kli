@@ -23,6 +23,7 @@ add_executable(kli
   "Str.h"
 
   "kli.rc"
+  "resources/kli.manifest"
 )
 
 find_library(LIB_INIH inih REQUIRED)
